@@ -1,0 +1,52 @@
+name: support-ticket-triage
+version: "1.0.0"
+description: >
+  AI agent environment for customer support ticket triage and resolution.
+  Agent must classify, prioritize, route, and draft responses to support tickets.
+author: "Your Name"
+tags: ["customer-support", "nlp", "triage", "real-world"]
+tasks:
+  - id: task_easy
+    name: "Ticket Classification"
+    difficulty: easy
+    description: "Classify a support ticket into the correct category"
+    max_steps: 3
+    reward_range: [0.0, 1.0]
+  - id: task_medium
+    name: "Triage and Routing"
+    difficulty: medium
+    description: "Classify, set priority, and route ticket to the correct team"
+    max_steps: 5
+    reward_range: [0.0, 1.0]
+  - id: task_hard
+    name: "Full Resolution"
+    difficulty: hard
+    description: "Full triage + draft a contextually appropriate resolution response"
+    max_steps: 8
+    reward_range: [-1.0, 1.0]
+observation_space:
+  type: object
+  fields:
+    ticket_id: string
+    subject: string
+    body: string
+    customer_tier: string
+    previous_contacts: integer
+    created_at: string
+action_space:
+  type: object
+  fields:
+    priority: "low|medium|high|critical"
+    category: "billing|technical|shipping|account|general"
+    assigned_team: string
+    response_draft: string
+    escalate: boolean
+    close_ticket: boolean
+    tags: array
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  tasks: GET /tasks
+  grader: GET /grader
+  baseline: POST /baseline

@@ -1,0 +1,542 @@
+[
+  {
+    "ticket_id": "TKT-001",
+    "subject": "Cannot login after password reset",
+    "body": "I tried resetting my password but keep getting invalid token error. This is urgent as I have a presentation tomorrow using your platform.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T09:30:00Z",
+    "attachments": ["screenshot.png"],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "high",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["password reset", "token", "login", "help", "account"]
+    }
+  },
+  {
+    "ticket_id": "TKT-002",
+    "subject": "Charged twice for my subscription",
+    "body": "I noticed two charges of $49.99 on my credit card this month for the same subscription. Please refund one of them immediately.",
+    "customer_tier": "pro",
+    "previous_contacts": 1,
+    "created_at": "2024-03-15T10:00:00Z",
+    "attachments": ["bank_statement.pdf"],
+    "customer_sentiment": "angry",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "high",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["refund", "charge", "billing", "credit card", "investigation"]
+    }
+  },
+  {
+    "ticket_id": "TKT-003",
+    "subject": "How do I export my data?",
+    "body": "Hi, I would like to know how to export all my project data as a CSV file. I looked in the settings but could not find the option.",
+    "customer_tier": "free",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T11:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "low",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["export", "CSV", "settings", "data", "steps"]
+    }
+  },
+  {
+    "ticket_id": "TKT-004",
+    "subject": "My order has not arrived after 3 weeks",
+    "body": "I placed order #98231 three weeks ago and it still has not arrived. The tracking page just says in transit. I need this for my business.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 2,
+    "created_at": "2024-03-15T12:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "angry",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "shipping",
+      "priority": "critical",
+      "assigned_team": "shipping_team",
+      "should_escalate": true,
+      "key_response_elements": ["order", "tracking", "shipping", "delay", "apologize"]
+    }
+  },
+  {
+    "ticket_id": "TKT-005",
+    "subject": "Need to update billing address",
+    "body": "We recently moved offices. I need to update the billing address on our account. The new address is 123 Main St, Austin TX 78701.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T13:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "medium",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["billing address", "update", "account", "confirm", "change"]
+    }
+  },
+  {
+    "ticket_id": "TKT-006",
+    "subject": "API returning 500 errors intermittently",
+    "body": "Our production app is getting random 500 errors from your API about 5 percent of the time. This is affecting our customers. Error code: SERVER_INTERNAL_ERROR.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T14:00:00Z",
+    "attachments": ["error_logs.txt"],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "critical",
+      "assigned_team": "tech_support",
+      "should_escalate": true,
+      "key_response_elements": ["API", "500", "error", "investigate", "production", "fix"]
+    }
+  },
+  {
+    "ticket_id": "TKT-007",
+    "subject": "Cancel my subscription",
+    "body": "I would like to cancel my monthly subscription effective immediately. Please confirm cancellation and stop future charges.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T15:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "medium",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["cancel", "subscription", "confirm", "charges", "effective"]
+    }
+  },
+  {
+    "ticket_id": "TKT-008",
+    "subject": "Feature request: dark mode",
+    "body": "Would love to have a dark mode option in the dashboard. My eyes get tired working late nights. Many of my colleagues want this too.",
+    "customer_tier": "free",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T16:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "positive",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "general",
+      "priority": "low",
+      "assigned_team": "general_support",
+      "should_escalate": false,
+      "key_response_elements": ["feature request", "noted", "feedback", "team", "future"]
+    }
+  },
+  {
+    "ticket_id": "TKT-009",
+    "subject": "Account locked after too many attempts",
+    "body": "My account got locked after I tried to login too many times. I have an important client meeting in 30 minutes and cannot access my files.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-15T17:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "panicked",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "account",
+      "priority": "critical",
+      "assigned_team": "account_team",
+      "should_escalate": false,
+      "key_response_elements": ["unlock", "account", "access", "immediate", "reset"]
+    }
+  },
+  {
+    "ticket_id": "TKT-010",
+    "subject": "Wrong item delivered",
+    "body": "I ordered the blue version of product SKU-4421 but received the red one. Order number is 77823. Please send the correct item.",
+    "customer_tier": "free",
+    "previous_contacts": 1,
+    "created_at": "2024-03-15T18:00:00Z",
+    "attachments": ["photo.jpg"],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "shipping",
+      "priority": "medium",
+      "assigned_team": "shipping_team",
+      "should_escalate": false,
+      "key_response_elements": ["wrong item", "replacement", "return", "correct", "order"]
+    }
+  },
+  {
+    "ticket_id": "TKT-011",
+    "subject": "Cannot upload files larger than 10MB",
+    "body": "I am trying to upload a 25MB video file but keep getting an upload failed error. I am on the Pro plan which should allow larger uploads.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T09:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "medium",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["upload", "file size", "limit", "pro plan", "workaround"]
+    }
+  },
+  {
+    "ticket_id": "TKT-012",
+    "subject": "Refund request for unused annual plan",
+    "body": "I accidentally purchased the annual plan instead of monthly. I realised within 2 hours. I have not used any features. Please refund.",
+    "customer_tier": "free",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T10:00:00Z",
+    "attachments": ["receipt.pdf"],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "medium",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["refund", "annual plan", "accidental", "policy", "process"]
+    }
+  },
+  {
+    "ticket_id": "TKT-013",
+    "subject": "Team member cannot accept invitation",
+    "body": "I invited three team members but they say the invitation link is expired. I have tried resending twice but same issue.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T11:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "account",
+      "priority": "medium",
+      "assigned_team": "account_team",
+      "should_escalate": false,
+      "key_response_elements": ["invitation", "expired", "resend", "team", "fix"]
+    }
+  },
+  {
+    "ticket_id": "TKT-014",
+    "subject": "Data missing after migration",
+    "body": "We migrated from the old system last night. This morning we noticed 3 months of historical reports are missing. This is critical for our audit next week.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T08:00:00Z",
+    "attachments": ["migration_log.txt"],
+    "customer_sentiment": "angry",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "critical",
+      "assigned_team": "tech_support",
+      "should_escalate": true,
+      "key_response_elements": ["data", "migration", "missing", "restore", "urgent", "audit"]
+    }
+  },
+  {
+    "ticket_id": "TKT-015",
+    "subject": "How to add a custom domain?",
+    "body": "I want to connect my own domain name to my workspace. I have a domain registered at GoDaddy. Can you walk me through the steps?",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T12:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "low",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["custom domain", "DNS", "CNAME", "steps", "GoDaddy"]
+    }
+  },
+  {
+    "ticket_id": "TKT-016",
+    "subject": "Package lost in transit",
+    "body": "Tracking shows my package has been stuck at the Memphis facility for 10 days with no movement. Order ID 55671. I need this for an event this weekend.",
+    "customer_tier": "free",
+    "previous_contacts": 1,
+    "created_at": "2024-03-16T13:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "angry",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "shipping",
+      "priority": "high",
+      "assigned_team": "shipping_team",
+      "should_escalate": true,
+      "key_response_elements": ["tracking", "lost", "carrier", "replacement", "investigate"]
+    }
+  },
+  {
+    "ticket_id": "TKT-017",
+    "subject": "Invoice shows wrong company name",
+    "body": "Our invoices are showing our old company name. We rebranded 2 months ago. Please update to new name: Nexus Solutions Ltd.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T14:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "low",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["invoice", "company name", "update", "reissue", "confirm"]
+    }
+  },
+  {
+    "ticket_id": "TKT-018",
+    "subject": "Two-factor authentication not working",
+    "body": "The 2FA codes sent to my phone are not working. I have tried 5 times. I am completely locked out of my account. I manage 50 users on this account.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T15:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "panicked",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "account",
+      "priority": "critical",
+      "assigned_team": "account_team",
+      "should_escalate": true,
+      "key_response_elements": ["2FA", "authentication", "locked out", "bypass", "restore access"]
+    }
+  },
+  {
+    "ticket_id": "TKT-019",
+    "subject": "Slow performance on dashboard",
+    "body": "The dashboard has been very slow to load for the past 2 days. It takes over 30 seconds to load. My internet connection is fine.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T16:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "medium",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["performance", "slow", "load time", "investigate", "cache"]
+    }
+  },
+  {
+    "ticket_id": "TKT-020",
+    "subject": "Request for bulk discount",
+    "body": "We are looking to upgrade 200 users to the Pro plan. Is there a bulk pricing option available? We are currently evaluating two other vendors.",
+    "customer_tier": "free",
+    "previous_contacts": 0,
+    "created_at": "2024-03-16T17:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "positive",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "high",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["bulk", "discount", "pricing", "enterprise", "sales team"]
+    }
+  },
+  {
+    "ticket_id": "TKT-021",
+    "subject": "Integration with Salesforce broken",
+    "body": "Our Salesforce integration stopped syncing 3 days ago. No data is flowing between systems. Our sales team is manually entering data as a workaround which is unsustainable.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 3,
+    "created_at": "2024-03-17T09:00:00Z",
+    "attachments": ["sync_error.json"],
+    "customer_sentiment": "angry",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "critical",
+      "assigned_team": "tech_support",
+      "should_escalate": true,
+      "key_response_elements": ["Salesforce", "integration", "sync", "fix", "workaround", "escalate"]
+    }
+  },
+  {
+    "ticket_id": "TKT-022",
+    "subject": "Delivery address needs to be changed",
+    "body": "I placed order 34521 an hour ago but need to change the delivery address. I just realised I entered my old address by mistake.",
+    "customer_tier": "free",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T10:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "shipping",
+      "priority": "high",
+      "assigned_team": "shipping_team",
+      "should_escalate": false,
+      "key_response_elements": ["address", "change", "order", "before dispatch", "update"]
+    }
+  },
+  {
+    "ticket_id": "TKT-023",
+    "subject": "Cannot delete my account",
+    "body": "I want to permanently delete my account and all associated data per GDPR. I have been trying to find the option but cannot locate it anywhere.",
+    "customer_tier": "free",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T11:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "account",
+      "priority": "medium",
+      "assigned_team": "account_team",
+      "should_escalate": false,
+      "key_response_elements": ["delete account", "GDPR", "data removal", "process", "confirm"]
+    }
+  },
+  {
+    "ticket_id": "TKT-024",
+    "subject": "App crashes on iOS 17",
+    "body": "Since updating to iOS 17 your mobile app crashes immediately on launch. I have tried reinstalling three times. iPhone 14 Pro.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T12:00:00Z",
+    "attachments": ["crash_log.txt"],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "high",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["iOS 17", "crash", "bug", "fix", "workaround", "update"]
+    }
+  },
+  {
+    "ticket_id": "TKT-025",
+    "subject": "Tax exempt status not applied",
+    "body": "We are a registered non-profit and should be tax exempt. We have been charged tax for the past 6 months. I am attaching our tax exemption certificate.",
+    "customer_tier": "pro",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T13:00:00Z",
+    "attachments": ["tax_exempt_cert.pdf"],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "high",
+      "assigned_team": "billing_team",
+      "should_escalate": false,
+      "key_response_elements": ["tax exempt", "non-profit", "refund", "certificate", "apply"]
+    }
+  },
+  {
+    "ticket_id": "TKT-026",
+    "subject": "Scheduled reports not being sent",
+    "body": "We set up weekly automated reports to be emailed every Monday but they stopped arriving 2 weeks ago. The schedule shows active in settings.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T14:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "medium",
+      "assigned_team": "tech_support",
+      "should_escalate": false,
+      "key_response_elements": ["scheduled reports", "email", "automation", "fix", "check settings"]
+    }
+  },
+  {
+    "ticket_id": "TKT-027",
+    "subject": "Multiple failed payment attempts",
+    "body": "I have tried to pay my invoice with three different credit cards and all are failing. My cards are definitely valid and have funds available.",
+    "customer_tier": "pro",
+    "previous_contacts": 2,
+    "created_at": "2024-03-17T15:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "frustrated",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "billing",
+      "priority": "high",
+      "assigned_team": "billing_team",
+      "should_escalate": true,
+      "key_response_elements": ["payment", "failed", "card", "alternative", "investigate"]
+    }
+  },
+  {
+    "ticket_id": "TKT-028",
+    "subject": "Need HIPAA compliance documentation",
+    "body": "We are a healthcare provider. Before proceeding we need your HIPAA compliance documentation and BAA agreement. This is blocking our procurement process.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T16:00:00Z",
+    "attachments": [],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "general",
+      "priority": "high",
+      "assigned_team": "general_support",
+      "should_escalate": false,
+      "key_response_elements": ["HIPAA", "compliance", "BAA", "documentation", "legal team"]
+    }
+  },
+  {
+    "ticket_id": "TKT-029",
+    "subject": "Webhook events not firing",
+    "body": "None of our webhook endpoints have received events for the past 6 hours. Our entire order processing pipeline is down as a result. Revenue impact is significant.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 1,
+    "created_at": "2024-03-17T17:00:00Z",
+    "attachments": ["webhook_logs.json"],
+    "customer_sentiment": "angry",
+    "sla_breach_risk": true,
+    "ground_truth": {
+      "category": "technical",
+      "priority": "critical",
+      "assigned_team": "tech_support",
+      "should_escalate": true,
+      "key_response_elements": ["webhook", "events", "pipeline", "urgent", "fix", "revenue"]
+    }
+  },
+  {
+    "ticket_id": "TKT-030",
+    "subject": "Change account owner",
+    "body": "Our original account owner has left the company. I am the new IT manager and need to transfer account ownership to myself. I have authorization from our CEO.",
+    "customer_tier": "enterprise",
+    "previous_contacts": 0,
+    "created_at": "2024-03-17T18:00:00Z",
+    "attachments": ["authorization_letter.pdf"],
+    "customer_sentiment": "neutral",
+    "sla_breach_risk": false,
+    "ground_truth": {
+      "category": "account",
+      "priority": "high",
+      "assigned_team": "account_team",
+      "should_escalate": false,
+      "key_response_elements": ["ownership", "transfer", "verification", "authorization", "process"]
+    }
+  }
+]
