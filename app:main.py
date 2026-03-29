@@ -1,13 +1,21 @@
 from fastapi import FastAPI, HTTPException
+from typing import Optional
+from pydantic import BaseModel
 from app.models import *
 from app.environment import SupportTriageEnv
 import json
 
 app = FastAPI(title="Support Ticket Triage OpenEnv", version="1.0.0")
+
 env = SupportTriageEnv()
 
+# Fix: Accept task_id as JSON body instead of query param
+class ResetRequest(BaseModel):
+    task_id: str = "task_easy"
+
 @app.post("/reset", response_model=Observation)
-def reset(task_id: str = "task_easy"):
+def reset(body: Optional[ResetRequest] = None):
+    task_id = body.task_id if body else "task_easy"
     return env.reset(task_id)
 
 @app.post("/step", response_model=StepResult)
