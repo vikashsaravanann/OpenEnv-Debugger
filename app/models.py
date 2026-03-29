@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from typing import Optional, Dict, Any, List
 from enum import Enum
 
@@ -68,3 +68,10 @@ class State(BaseModel):
 
 class ResetRequest(BaseModel):
     task_id: str = "task_easy"
+
+    @model_validator(mode="before")
+    @classmethod
+    def allow_none(cls, data):
+        if data is None or data == "":
+            return {}
+        return data

@@ -13,9 +13,8 @@ class ResetRequest(BaseModel):
     task_id: str = "task_easy"
 
 @app.post("/reset", response_model=Observation)
-def reset(body: Optional[ResetRequest] = Body(default=None)):
-    task_id = body.task_id if body else "task_easy"
-    return env.reset(task_id)
+def reset(body: ResetRequest = Body(default_factory=ResetRequest)):
+    return env.reset(body.task_id)
 
 @app.post("/step", response_model=StepResult)
 def step(action: Action):
