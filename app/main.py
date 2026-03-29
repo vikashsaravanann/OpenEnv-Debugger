@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Body
 from typing import Optional
 from pydantic import BaseModel
 from app.models import *
@@ -13,7 +13,7 @@ class ResetRequest(BaseModel):
     task_id: str = "task_easy"
 
 @app.post("/reset", response_model=Observation)
-def reset(body: Optional[ResetRequest] = None):
+def reset(body: Optional[ResetRequest] = Body(default=None)):
     task_id = body.task_id if body else "task_easy"
     return env.reset(task_id)
 
