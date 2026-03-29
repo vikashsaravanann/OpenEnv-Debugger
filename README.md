@@ -1,5 +1,5 @@
 # Support Ticket Triage — OpenEnv 🚀
-**Team:** Fresh Tensors (Vikash S, Sona R, Jositha)  
+**Team:** Fresh Tensors (Vikash S)  
 **Event:** Meta PyTorch OpenEnv Hackathon x Scaler School of Technology  
 **Live API Endpoint:** [Hugging Face Space](https://huggingface.co/spaces/vikashsaravanan/openenv-support-triage)
 
