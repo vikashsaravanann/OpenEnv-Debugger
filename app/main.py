@@ -8,6 +8,16 @@ import json
 
 app = FastAPI(title="Support Ticket Triage OpenEnv", version="1.0.0")
 
+# HF Spaces uses HEAD requests to detect if the space is "Running".
+# Without explicit HEAD handlers FastAPI returns 405, keeping the badge stuck on "Building".
+@app.head("/")
+def head_root():
+    return HTMLResponse(content="", status_code=200)
+
+@app.head("/health")
+def head_health():
+    return HTMLResponse(content="", status_code=200)
+
 @app.get("/", response_class=HTMLResponse)
 def root():
     return """<!DOCTYPE html>
