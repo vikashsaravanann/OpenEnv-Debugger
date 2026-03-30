@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Body
+from fastapi.responses import HTMLResponse
 from typing import Optional
 from pydantic import BaseModel
 from app.models import *
@@ -6,6 +7,105 @@ from app.environment import SupportTriageEnv
 import json
 
 app = FastAPI(title="Support Ticket Triage OpenEnv", version="1.0.0")
+
+@app.get("/", response_class=HTMLResponse)
+def root():
+    return """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OpenEnv Support Triage</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 48px 56px;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.4);
+    }
+    .badge {
+      display: inline-block;
+      background: #22c55e;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+    p  { color: rgba(255,255,255,0.65); font-size: 1rem; line-height: 1.6; margin-bottom: 32px; }
+    .endpoints { text-align: left; }
+    .endpoints h2 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; color: rgba(255,255,255,0.8); }
+    .endpoint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+    }
+    .method {
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      min-width: 46px;
+      text-align: center;
+    }
+    .get  { background: #3b82f6; }
+    .post { background: #10b981; }
+    code { color: rgba(255,255,255,0.85); }
+    .docs-link {
+      display: inline-block;
+      margin-top: 24px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .docs-link:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">🟢 Running</div>
+    <h1>OpenEnv Support Triage</h1>
+    <p>A reinforcement-learning environment for AI-powered support ticket triage. Reset, step, and grade your agent's performance.</p>
+    <div class="endpoints">
+      <h2>Available Endpoints</h2>
+      <div class="endpoint"><span class="method post">POST</span><code>/reset</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/step</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/state</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/tasks</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/grader</code></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/health</code></div>
+    </div>
+    <a href="/docs" class="docs-link">📖 Open API Docs</a>
+  </div>
+</body>
+</html>"""
 
 env = SupportTriageEnv()
 
