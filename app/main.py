@@ -150,6 +150,7 @@ def tasks():
                 "name": "Ticket Classification",
                 "difficulty": "easy",
                 "description": "Classify ticket into correct category",
+                "has_grader": True,
                 "action_schema": {
                     "required": ["category"],
                     "optional": ["tags"]
@@ -160,6 +161,7 @@ def tasks():
                 "name": "Triage and Routing",
                 "difficulty": "medium",
                 "description": "Classify, set priority, and route to team",
+                "has_grader": True,
                 "action_schema": {
                     "required": ["category", "priority", "assigned_team"],
                     "optional": ["tags", "escalate"]
@@ -170,6 +172,7 @@ def tasks():
                 "name": "Full Resolution",
                 "difficulty": "hard",
                 "description": "Full triage + draft resolution response",
+                "has_grader": True,
                 "action_schema": {
                     "required": ["category", "priority", "assigned_team", "response_draft"],
                     "optional": ["escalate", "close_ticket", "tags"]

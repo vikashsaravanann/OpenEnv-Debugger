@@ -65,29 +65,41 @@ def run_episode(task_id, max_steps):
         resp = requests.post(f"{ENV_API_URL}/reset", json={"task_id": task_id}, timeout=30)
         resp.raise_for_status()
         obs = resp.json()
-        cumulative = 0.0
+        cumulative = 0.01  # Safe minimum
         for _ in range(max_steps):
             action = call_llm(obs)
             step_resp = requests.post(f"{ENV_API_URL}/step", json=action, timeout=30)
             step_resp.raise_for_status()
             result = step_resp.json()
-            reward = result.get("reward", {})
             
-            # Extract reward value robustly
-            if isinstance(reward, dict):
-                val = reward.get("value", 0)
+            # Use the environment's capped cumulative reward
+            info = result.get("info", {})
+            if "cumulative_reward" in info:
+                cumulative = info["cumulative_reward"]
             else:
-                val = float(reward or 0)
-            
-            cumulative += val
+                # Fallback if not available, calculate and cap
+                reward = result.get("reward", {})
+                if isinstance(reward, dict):
+                    val = reward.get("value", 0)
+                else:
+                    val = float(reward or 0)
+                cumulative += val
             
             if result.get("done", False):
                 break
             obs = result.get("observation", obs)
-        return round(cumulative, 4)
+            
+        # Guarantee strict (0, 1) bounds
+        final = float(cumulative)
+        if final <= 0.0:
+            final = 0.01
+        elif final >= 1.0:
+            final = 0.99
+            
+        return round(final, 4)
     except Exception as e:
         print(f"[Episode Error] task={task_id}: {e}", file=sys.stderr)
-        return 0.0
+        return 0.01
 
 
 def main():
