@@ -61,73 +61,89 @@ def call_llm(obs):
 
 
 def run_episode(task_id, max_steps):
+    print(f"[START] task={task_id} env=OpenEnv-Debugger model={MODEL_NAME}", flush=True)
+    
+    rewards = []
     try:
         resp = requests.post(f"{ENV_API_URL}/reset", json={"task_id": task_id}, timeout=30)
         resp.raise_for_status()
         obs = resp.json()
         cumulative = 0.01  # Safe minimum
-        for _ in range(max_steps):
-            action = call_llm(obs)
-            step_resp = requests.post(f"{ENV_API_URL}/step", json=action, timeout=30)
-            step_resp.raise_for_status()
-            result = step_resp.json()
-            
-            # Use the environment's capped cumulative reward
-            info = result.get("info", {})
-            if "cumulative_reward" in info:
-                cumulative = info["cumulative_reward"]
-            else:
-                # Fallback if not available, calculate and cap
-                reward = result.get("reward", {})
-                if isinstance(reward, dict):
-                    val = reward.get("value", 0)
-                else:
-                    val = float(reward or 0)
-                cumulative += val
-            
-            if result.get("done", False):
+        done = False
+        error_msg = "null"
+        
+        for step_n in range(1, max_steps + 1):
+            if done:
                 break
-            obs = result.get("observation", obs)
+                
+            action = call_llm(obs)
+            action_str = json.dumps(action).replace(" ", "")
             
-        # Guarantee strict (0, 1) bounds
+            try:
+                step_resp = requests.post(f"{ENV_API_URL}/step", json=action, timeout=30)
+                step_resp.raise_for_status()
+                result = step_resp.json()
+                
+                info = result.get("info", {})
+                if "cumulative_reward" in info:
+                    cumulative = info["cumulative_reward"]
+                else:
+                    reward_dict = result.get("reward", {})
+                    if isinstance(reward_dict, dict):
+                        val = reward_dict.get("value", 0)
+                    else:
+                        val = float(reward_dict or 0)
+                    cumulative = val
+                
+                # Fetch step reward for logging
+                reward_dict = result.get("reward", {})
+                if isinstance(reward_dict, dict):
+                    step_reward = reward_dict.get("value", 0)
+                else:
+                    step_reward = float(reward_dict or 0)
+                rewards.append(f"{step_reward:.2f}")
+
+                done = result.get("done", False)
+                obs = result.get("observation", obs)
+                
+                print(f"[STEP] step={step_n} action={action_str} reward={step_reward:.2f} done={str(done).lower()} error=null", flush=True)
+
+            except Exception as e:
+                error_msg = str(e).replace('\n', ' ')
+                print(f"[STEP] step={step_n} action={action_str} reward=0.00 done=true error={error_msg}", flush=True)
+                done = True
+                rewards.append("0.00")
+                break
+            
         final = float(cumulative)
         if final <= 0.0:
             final = 0.01
         elif final >= 1.0:
             final = 0.99
             
+        success = final >= 0.5
+        rewards_joined = ",".join(rewards)
+        print(f"[END] success={str(success).lower()} steps={len(rewards)} score={final:.2f} rewards={rewards_joined}", flush=True)
         return round(final, 4)
     except Exception as e:
-        print(f"[Episode Error] task={task_id}: {e}", file=sys.stderr)
+        error_msg = str(e).replace('\n', ' ')
+        print(f"[STEP] step=1 action={{}} reward=0.00 done=true error={error_msg}", flush=True)
+        print(f"[END] success=false steps=1 score=0.01 rewards=0.00", flush=True)
         return 0.01
 
-
 def main():
-    print("[START]")
     tasks = [("task_easy", 3), ("task_medium", 5), ("task_hard", 8)]
-    all_scores = {}
-
+    
     try:
         health = requests.get(f"{ENV_API_URL}/health", timeout=10)
         health.raise_for_status()
-        print("[INFO] Environment reachable")
     except Exception as e:
-        print(f"[ERROR] Cannot reach environment: {e}")
+        print(f"Cannot reach environment: {e}", file=sys.stderr)
         sys.exit(1)
 
+    # We only run ONE episode per task to match the Hackathon parser logic which expects one [START]/[END] block per task execution.
     for task_id, max_steps in tasks:
-        scores = []
-        for ep in range(EPISODES_PER_TASK):
-            score = run_episode(task_id, max_steps)
-            scores.append(score)
-            print(f"[STEP] task={task_id} episode={ep+1} score={score}")
-        avg = round(sum(scores) / len(scores), 4)
-        all_scores[task_id] = avg
-        print(f"[STEP] task={task_id} average={avg}")
-
-    overall = round(sum(all_scores.values()) / len(all_scores), 4)
-    print(f"[END] scores={json.dumps(all_scores)} overall={overall}")
-
+        run_episode(task_id, max_steps)
 
 if __name__ == "__main__":
     main()
