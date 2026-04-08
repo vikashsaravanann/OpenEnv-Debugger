@@ -16,21 +16,24 @@ tasks:
     difficulty: easy
     description: "Classify a support ticket into the correct category"
     max_steps: 3
-    reward_range: [0.0, 1.0]
+    has_grader: true
+    reward_range: [0.01, 0.99]
 
   - id: task_medium
     name: "Triage and Routing"
     difficulty: medium
     description: "Classify, set priority, and route ticket to the correct team"
     max_steps: 5
-    reward_range: [0.0, 1.0]
+    has_grader: true
+    reward_range: [0.01, 0.99]
 
   - id: task_hard
     name: "Full Resolution"
     difficulty: hard
     description: "Full triage + draft a contextually appropriate resolution response"
     max_steps: 8
-    reward_range: [0.0, 1.0]
+    has_grader: true
+    reward_range: [0.01, 0.99]
 
 observation_space:
   type: object

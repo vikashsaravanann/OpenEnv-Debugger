@@ -113,15 +113,27 @@ def run_episode(http: httpx.Client, task_id: str, max_steps: int) -> float:
         step_resp.raise_for_status()
         result = step_resp.json()
 
-        reward = result["reward"]["value"]
-        cumulative_reward += reward
+        info = result.get("info", {})
+        if "cumulative_reward" in info:
+            cumulative_reward = info["cumulative_reward"]
+        else:
+            reward = result["reward"]["value"]
+            cumulative_reward += reward
+            
         done = result["done"]
         obs = result["observation"]
 
         if done:
             break
+            
+    # Guarantee bounds (0, 1) safely
+    final_score = float(cumulative_reward)
+    if final_score <= 0.0:
+        final_score = 0.01
+    elif final_score >= 1.0:
+        final_score = 0.99
 
-    return round(cumulative_reward, 4)
+    return round(final_score, 4)
 
 
 # ─────────────────────────────────────────
