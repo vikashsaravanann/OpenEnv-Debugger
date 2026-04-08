@@ -1,219 +1,126 @@
-"""
-Inference Script: Support Ticket Triage (OpenEnv)
-==================================================
-MANDATORY VARIABLES CONFIGURED:
-    API_BASE_URL    The API endpoint for the LLM.
-    MODEL_NAME      The model identifier to use for inference.
-    HF_TOKEN        Hugging Face / API key.
-"""
-
 import os
+import sys
 import json
 import requests
 from openai import OpenAI
 
-# --- 1. MANDATORY LLM CONFIGURATION ---
-API_BASE_URL = os.getenv("API_BASE_URL")
-API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
-MODEL_NAME = os.getenv("MODEL_NAME")
+# --- MANDATORY VARIABLES ---
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
+API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "")
 
-# --- 2. YOUR ENVIRONMENT ENDPOINT ---
 ENV_API_URL = "https://vikashsaravanan-openenv-support-triage.hf.space"
-MAX_STEPS = 5
+EPISODES_PER_TASK = 3
 
-# --- 3. SYSTEM PROMPT (instructs LLM to return valid Action JSON) ---
-SYSTEM_PROMPT = """\
-You are an AI Customer Support Triage Agent.
+client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
-You will be given a JSON observation for a support ticket.
-Your job is to output ONLY a valid JSON object that matches this schema — no extra text, no markdown:
-
-{
-  "category": "<billing|technical|shipping|account|general>",
-  "priority": "<low|medium|high|critical>",
-  "assigned_team": "<e.g. billing-team, tech-support, shipping-ops, account-management>",
-  "escalate": <true|false>,
-  "close_ticket": <true|false>,
-  "tags": ["<tag1>", "<tag2>"],
-  "response_draft": "<Optional short professional reply to the customer>"
-}
-
-Rules:
-- "category" and "priority" MUST always be included and use the exact enum values.
-- "assigned_team" should be a sensible lowercase kebab-case team name.
-- Output ONLY the JSON object. Do NOT include markdown fences or explanations.
-"""
+SYSTEM_PROMPT = """You are an expert customer support triage agent.
+Given a support ticket, respond with ONLY a valid JSON object — no markdown, no explanation.
+Fields:
+- category: billing|technical|shipping|account|general
+- priority: low|medium|high|critical
+- assigned_team: tech_support|billing_team|shipping_team|account_team|general_support
+- response_draft: string (professional reply, 50-150 words for hard tasks)
+- escalate: true|false
+- close_ticket: true|false
+- tags: list of strings
+Rules: Always set category, priority, and assigned_team. Output ONLY JSON."""
 
 
-def call_llm(client, observation: dict, task_id: str) -> dict:
-    """Call the LLM and return a parsed Action dict."""
-    # Tailor the user message based on task difficulty
-    user_msg = (
-        f"Task: {task_id}\n"
-        f"Support ticket observation:\n{json.dumps(observation, indent=2)}\n\n"
-        "Respond with ONLY the JSON action object."
+def build_prompt(obs: dict) -> str:
+    return (
+        f"Support Ticket:
+"
+        f"Ticket ID: {obs.get(chr(39)+'ticket_id'+chr(39), chr(39)+chr(39))}
+"
+        f"Subject: {obs.get(chr(39)+'subject'+chr(39), chr(39)+chr(39))}
+"
+        f"Customer Tier: {obs.get(chr(39)+'customer_tier'+chr(39), chr(39)+chr(39))}
+"
+        f"Sentiment: {obs.get(chr(39)+'customer_sentiment'+chr(39), chr(39)+'neutral'+chr(39))}
+"
+        f"Message: {obs.get(chr(39)+'body'+chr(39), chr(39)+chr(39))}
+"
+        f"Task: {obs.get(chr(39)+'task_id'+chr(39), chr(39)+chr(39))}
+"
+        f"Step: {obs.get(chr(39)+'step_number'+chr(39), 1)} of {obs.get(chr(39)+'max_steps'+chr(39), 1)}
+"
+        "Respond with JSON only."
     )
 
+
+def call_llm(obs: dict) -> dict:
+    prompt = build_prompt(obs)
     try:
         completion = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_msg},
+                {"role": "user", "content": prompt},
             ],
             temperature=0.1,
-            max_tokens=400,
-            response_format={"type": "json_object"},  # enforce JSON mode where supported
+            max_tokens=500,
         )
         raw = completion.choices[0].message.content.strip()
-    except Exception:
-        # Some providers don't support response_format — retry without it
-        try:
-            completion = client.chat.completions.create(
-                model=MODEL_NAME,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_msg},
-                ],
-                temperature=0.1,
-                max_tokens=400,
-            )
-            raw = completion.choices[0].message.content.strip()
-        except Exception as e:
-            print(f"  [LLM] Request failed: {e}")
-            return _fallback_action(observation)
-
-    # Strip markdown fences if the model added them despite instructions
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-        raw = raw.strip()
-
-    try:
-        action = json.loads(raw)
-    except json.JSONDecodeError:
-        print(f"  [LLM] Could not parse JSON: {raw[:200]}")
-        action = _fallback_action(observation)
-
-    # Validate / default required enum fields
-    valid_categories = {"billing", "technical", "shipping", "account", "general"}
-    valid_priorities = {"low", "medium", "high", "critical"}
-
-    if action.get("category") not in valid_categories:
-        action["category"] = "general"
-    if action.get("priority") not in valid_priorities:
-        action["priority"] = "medium"
-    if not action.get("assigned_team"):
-        action["assigned_team"] = f"{action['category']}-team"
-    if "escalate" not in action:
-        action["escalate"] = False
-    if "close_ticket" not in action:
-        action["close_ticket"] = False
-    if "tags" not in action:
-        action["tags"] = []
-
-    return action
+        if raw.startswith("")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        return json.loads(raw.strip())
+    except Exception as e:
+        print(f"[LLM Error] {e}", file=sys.stderr)
+        return {
+            "category": "general",
+            "priority": "medium",
+            "assigned_team": "general_support",
+            "escalate": False,
+            "close_ticket": False,
+            "tags": [],
+        }
 
 
-def _fallback_action(observation: dict) -> dict:
-    """Minimal safe fallback when the LLM fails."""
-    subject = observation.get("subject", "").lower()
-    if "bill" in subject or "charge" in subject or "invoice" in subject:
-        category = "billing"
-    elif "ship" in subject or "deliver" in subject or "track" in subject:
-        category = "shipping"
-    elif "account" in subject or "login" in subject or "password" in subject:
-        category = "account"
-    elif "bug" in subject or "error" in subject or "crash" in subject or "technical" in subject:
-        category = "technical"
-    else:
-        category = "general"
-
-    return {
-        "category": category,
-        "priority": "medium",
-        "assigned_team": f"{category}-team",
-        "escalate": False,
-        "close_ticket": False,
-        "tags": [],
-        "response_draft": (
-            "Thank you for contacting support. We have received your request "
-            "and a specialist will assist you shortly."
-        ),
-    }
+def run_episode(task_id: str, max_steps: int) -> float:
+    resp = requests.post(f"{ENV_API_URL}/reset", json={"task_id": task_id}, timeout=30)
+    resp.raise_for_status()
+    obs = resp.json()
+    cumulative = 0.0
+    for _ in range(max_steps):
+        action = call_llm(obs)
+        step_resp = requests.post(f"{ENV_API_URL}/step", json=action, timeout=30)
+        step_resp.raise_for_status()
+        result = step_resp.json()
+        reward = result.get("reward", {})
+        cumulative += reward.get("value", 0) if isinstance(reward, dict) else reward
+        if result.get("done", False):
+            break
+        obs = result.get("observation", obs)
+    return round(cumulative, 4)
 
 
 def main():
-    # Initialize the OpenAI-compatible client
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    print("[START]")
+    tasks = [("task_easy", 3), ("task_medium", 5), ("task_hard", 8)]
+    all_scores = {}
 
-    print(f"Connecting to OpenEnv at: {ENV_API_URL}")
-    print(f"LLM endpoint: {API_BASE_URL} | Model: {MODEL_NAME}")
-
-    # --- Step 1: Reset the environment ---
     try:
-        response = requests.post(
-            f"{ENV_API_URL}/reset",
-            json={"task_id": "task_easy"},
-            timeout=30,
-        )
-        response.raise_for_status()
-        env_state = response.json()
-        task_id = env_state.get("task_id", "task_easy")
-        print(f"Environment reset successful. Task: {task_id}")
+        health = requests.get(f"{ENV_API_URL}/health", timeout=10)
+        health.raise_for_status()
+        print("[INFO] Environment reachable")
     except Exception as e:
-        print(f"CRITICAL ERROR: Failed to connect to environment: {e}")
-        return
+        print(f"[ERROR] Cannot reach environment: {e}")
+        sys.exit(1)
 
-    # --- Step 2: Agent Loop ---
-    for step in range(1, MAX_STEPS + 1):
-        observation = {
-            k: v
-            for k, v in env_state.items()
-            if k not in ("done", "reward", "task_id", "step_number", "max_steps")
-        }
-        is_done = env_state.get("done", False)
+    for task_id, max_steps in tasks:
+        scores = []
+        for ep in range(EPISODES_PER_TASK):
+            score = run_episode(task_id, max_steps)
+            scores.append(score)
+            print(f"[STEP] task={task_id} episode={ep+1} score={score}")
+        avg = round(sum(scores) / len(scores), 4)
+        all_scores[task_id] = avg
+        print(f"[STEP] task={task_id} average={avg}")
 
-        if is_done:
-            print(f"\nEpisode complete!")
-            break
-
-        print(f"\n--- Step {step} ---")
-        print(f"Ticket: {observation.get('ticket_id', '?')} | {observation.get('subject', '?')[:60]}")
-
-        # --- LLM decides the action ---
-        action_dict = call_llm(client, env_state, task_id)
-        print(f"Action: category={action_dict.get('category')} | priority={action_dict.get('priority')} | team={action_dict.get('assigned_team')}")
-
-        # --- Send action directly to /step (Action schema, NOT wrapped in "action" key) ---
-        try:
-            step_resp = requests.post(
-                f"{ENV_API_URL}/step",
-                json=action_dict,
-                timeout=30,
-            )
-            step_resp.raise_for_status()
-            env_state = step_resp.json()
-
-            reward = env_state.get("reward", {})
-            reward_val = reward.get("value", 0) if isinstance(reward, dict) else reward
-            done = env_state.get("done", False)
-            cumulative = env_state.get("info", {}).get("cumulative_reward", "?")
-
-            print(f"Reward: {reward_val} | Cumulative: {cumulative} | Done: {done}")
-
-            if done:
-                print(f"\nEpisode finished at step {step}.")
-                break
-
-        except Exception as e:
-            print(f"Failed to send step to environment: {e}")
-            if hasattr(e, "response") and e.response is not None:
-                print(f"Response body: {e.response.text[:500]}")
-            break
-    else:
-        print("\nReached max steps without episode ending.")
+    overall = round(sum(all_scores.values()) / len(all_scores), 4)
+    print(f"[END] scores={json.dumps(all_scores)} overall={overall}")
 
 
 if __name__ == "__main__":
