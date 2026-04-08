@@ -85,7 +85,7 @@ def grade_hard(action, ticket, step):
     step_penalty = max(0.0, (step - 1) * 0.02)
     breakdown["step_penalty"] = -step_penalty
 
-    total = max(-1.0, min(1.0, sum(breakdown.values())))
+    total = max(0.01, min(0.99, sum(breakdown.values())))
     reason = (
         f"Triage={cat_score:.1f}/{pri_score:.1f}/{team_score:.1f}, "
         f"Response={response_score:.2f}, "

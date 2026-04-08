@@ -45,7 +45,7 @@ def grade_medium(action, ticket, step):
     step_penalty = max(0.0, (step - 1) * 0.03)
     breakdown["step_penalty"] = -step_penalty
 
-    total = max(0.0, min(1.0, sum(breakdown.values())))
+    total = max(0.01, min(0.99, sum(breakdown.values())))
     reason = (
         f"Cat={cat_score:.1f}, Pri={pri_score:.1f}, "
         f"Team={team_score:.1f}, Escalate={'ok' if escalate_correct else 'wrong'}"

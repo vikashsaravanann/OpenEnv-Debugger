@@ -28,6 +28,6 @@ def grade_easy(action, ticket, step):
         tag_bonus = 0.1
     breakdown["tag_bonus"] = tag_bonus
 
-    total = max(0.0, min(1.0, sum(breakdown.values())))
+    total = max(0.01, min(0.99, sum(breakdown.values())))
     reason = f"Category: {'correct' if cat_score == 1.0 else 'wrong'}, Step penalty: {step_penalty}"
     return round(total, 3), breakdown, reason

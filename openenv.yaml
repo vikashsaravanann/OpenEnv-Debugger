@@ -30,7 +30,7 @@ tasks:
     difficulty: hard
     description: "Full triage + draft a contextually appropriate resolution response"
     max_steps: 8
-    reward_range: [-1.0, 1.0]
+    reward_range: [0.0, 1.0]
 
 observation_space:
   type: object
