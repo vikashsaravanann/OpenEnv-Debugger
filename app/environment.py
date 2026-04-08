@@ -74,10 +74,9 @@ class SupportTriageEnv:
 
         reward_val = round(max(0.01, min(0.99, reward_val)), 3)
         reward = Reward(value=reward_val, breakdown=breakdown, reason=reason)
-        # Cap cumulative reward strictly between 0 and 1
-        self._state.cumulative_reward = round(
-            max(0.01, min(0.99, self._state.cumulative_reward + reward_val)), 3
-        )
+        # The grader returns the TOTAL episode score (including step penalties).
+        # We simply assign it to cumulative_reward, rather than accumulating it.
+        self._state.cumulative_reward = reward_val
 
         # Check if episode should end
         max_steps = MAX_STEPS[self._state.task_id]
