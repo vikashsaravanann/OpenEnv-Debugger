@@ -76,6 +76,12 @@ def grade_hard(action, ticket, step):
     escalate_correct = action.escalate == gt["should_escalate"]
     breakdown["escalation"] = 0.05 if escalate_correct else -0.05
 
+    # --- ADVANCED AGENT MECHANICS ---
+    tool_bonus = 0.0
+    if action.tags and any("fetch" in t or "query" in t for t in action.tags):
+        tool_bonus = 0.10
+    breakdown["tool_bonus"] = tool_bonus
+
     # --- PENALTIES ---
     # Closing without a response draft
     if action.close_ticket and not action.response_draft:

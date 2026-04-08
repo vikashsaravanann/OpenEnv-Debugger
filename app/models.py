@@ -31,6 +31,7 @@ class Observation(BaseModel):
     task_id: str
     step_number: int
     max_steps: int
+    system_context: str = ""
 
 
 class Action(BaseModel):
@@ -64,6 +65,7 @@ class State(BaseModel):
     actions_taken: List[Dict[str, Any]]
     cumulative_reward: float
     done: bool
+    system_context: str = ""
 
 
 class ResetRequest(BaseModel):

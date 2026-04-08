@@ -18,20 +18,22 @@ Respond with ONLY valid JSON. Fields:
 - category: billing|technical|shipping|account|general
 - priority: low|medium|high|critical
 - assigned_team: tech_support|billing_team|shipping_team|account_team|general_support
-- response_draft: string
+- response_draft: string (draft a response if interacting or closing)
 - escalate: true|false
-- close_ticket: true|false
-- tags: list of strings
+- close_ticket: true|false (set to false if you are waiting for a customer reply)
+- tags: list of strings (SPECIAL TOOLS: use "query_system_logs" to fetch server logs, or "fetch_billing_history" to fetch payment history. You will see the results in the next step's System Context).
 Always set category, priority, and assigned_team. Output ONLY JSON."""
 
-
 def build_prompt(obs):
+    system_ctx = obs.get('system_context', '')
+    sys_block = f"System Context: {system_ctx}\n" if system_ctx else ""
     return (
         f"Ticket ID: {obs.get('ticket_id', '')}\n"
         f"Subject: {obs.get('subject', '')}\n"
         f"Customer Tier: {obs.get('customer_tier', '')}\n"
         f"Sentiment: {obs.get('customer_sentiment', 'neutral')}\n"
         f"Message: {obs.get('body', '')}\n"
+        f"{sys_block}"
         f"Task: {obs.get('task_id', '')}\n"
         f"Step: {obs.get('step_number', 1)} of {obs.get('max_steps', 1)}\n"
         "Respond with JSON only."

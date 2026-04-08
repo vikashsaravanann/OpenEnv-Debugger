@@ -62,6 +62,25 @@ class SupportTriageEnv:
         self._state.step += 1
         self._state.actions_taken.append(action.model_dump())
 
+        # Check for tool usage in tags to populate system_context
+        system_context = ""
+        if "query_system_logs" in action.tags:
+            system_context += "[SYSTEM LOGS]: Intermittent 500 Errors across gateways since 08:00:00Z. "
+        if "fetch_billing_history" in action.tags:
+            system_context += "[BILLING HISTORY]: Account in good standing but recent payment flagged by fraud detection. "
+        
+        self._state.system_context = system_context
+
+        # Simulate customer reply if ticket is not closed but response is drafted
+        if not action.close_ticket and action.response_draft:
+            # Append interaction to the ticket body
+            self._current_ticket["body"] += f"\n\n[Agent]: {action.response_draft}"
+            self._current_ticket["body"] += "\n[Customer]: Please hurry and resolve this, I have provided the details."
+            
+            # Degrade sentiment if dragged out
+            if self._state.step >= 3:
+                self._current_ticket["customer_sentiment"] = "angry"
+
         # Get grader for current task
         grader = GRADERS[self._state.task_id]
         reward_val, breakdown, reason = grader(
@@ -122,6 +141,7 @@ class SupportTriageEnv:
             task_id=self._state.task_id,
             step_number=self._state.step,
             max_steps=MAX_STEPS[self._state.task_id],
+            system_context=self._state.system_context if getattr(self, '_state', None) else "",
         )
 
     def _pick_ticket(self, task_id: str):
