@@ -72,10 +72,11 @@ class SupportTriageEnv:
         if self._state.step > 1:
             reward_val = reward_val + 0.01  # tiny progress signal
 
-        reward_val = round(max(-1.0, min(1.0, reward_val)), 3)
+        reward_val = round(max(0.01, min(0.99, reward_val)), 3)
         reward = Reward(value=reward_val, breakdown=breakdown, reason=reason)
+        # Cap cumulative reward strictly between 0 and 1
         self._state.cumulative_reward = round(
-            self._state.cumulative_reward + reward_val, 3
+            max(0.01, min(0.99, self._state.cumulative_reward + reward_val)), 3
         )
 
         # Check if episode should end
