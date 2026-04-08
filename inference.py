@@ -4,96 +4,90 @@ import json
 import requests
 from openai import OpenAI
 
-# --- MANDATORY VARIABLES ---
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "")
 
-ENV_API_URL = "https://vikashsaravanan-openenv-support-triage.hf.space"
+ENV_API_URL = os.getenv("ENV_URL", "http://localhost:7860")
 EPISODES_PER_TASK = 3
 
 client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
 SYSTEM_PROMPT = """You are an expert customer support triage agent.
-Given a support ticket, respond with ONLY a valid JSON object — no markdown, no explanation.
-Fields:
+Respond with ONLY valid JSON. Fields:
 - category: billing|technical|shipping|account|general
 - priority: low|medium|high|critical
 - assigned_team: tech_support|billing_team|shipping_team|account_team|general_support
-- response_draft: string (professional reply, 50-150 words for hard tasks)
+- response_draft: string
 - escalate: true|false
 - close_ticket: true|false
 - tags: list of strings
-Rules: Always set category, priority, and assigned_team. Output ONLY JSON."""
+Always set category, priority, and assigned_team. Output ONLY JSON."""
 
 
-def build_prompt(obs: dict) -> str:
+def build_prompt(obs):
     return (
-        f"Support Ticket:
-"
-        f"Ticket ID: {obs.get(chr(39)+'ticket_id'+chr(39), chr(39)+chr(39))}
-"
-        f"Subject: {obs.get(chr(39)+'subject'+chr(39), chr(39)+chr(39))}
-"
-        f"Customer Tier: {obs.get(chr(39)+'customer_tier'+chr(39), chr(39)+chr(39))}
-"
-        f"Sentiment: {obs.get(chr(39)+'customer_sentiment'+chr(39), chr(39)+'neutral'+chr(39))}
-"
-        f"Message: {obs.get(chr(39)+'body'+chr(39), chr(39)+chr(39))}
-"
-        f"Task: {obs.get(chr(39)+'task_id'+chr(39), chr(39)+chr(39))}
-"
-        f"Step: {obs.get(chr(39)+'step_number'+chr(39), 1)} of {obs.get(chr(39)+'max_steps'+chr(39), 1)}
-"
+        f"Ticket ID: {obs.get('ticket_id', '')}\n"
+        f"Subject: {obs.get('subject', '')}\n"
+        f"Customer Tier: {obs.get('customer_tier', '')}\n"
+        f"Sentiment: {obs.get('customer_sentiment', 'neutral')}\n"
+        f"Message: {obs.get('body', '')}\n"
+        f"Task: {obs.get('task_id', '')}\n"
+        f"Step: {obs.get('step_number', 1)} of {obs.get('max_steps', 1)}\n"
         "Respond with JSON only."
     )
 
 
-def call_llm(obs: dict) -> dict:
-    prompt = build_prompt(obs)
+def call_llm(obs):
     try:
         completion = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": build_prompt(obs)},
             ],
             temperature=0.1,
             max_tokens=500,
         )
         raw = completion.choices[0].message.content.strip()
-        if raw.startswith("")[1]
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
         return json.loads(raw.strip())
     except Exception as e:
         print(f"[LLM Error] {e}", file=sys.stderr)
-        return {
-            "category": "general",
-            "priority": "medium",
-            "assigned_team": "general_support",
-            "escalate": False,
-            "close_ticket": False,
-            "tags": [],
-        }
+        return {"category": "general", "priority": "medium", "assigned_team": "general_support", "escalate": False, "close_ticket": False, "tags": []}
 
 
-def run_episode(task_id: str, max_steps: int) -> float:
-    resp = requests.post(f"{ENV_API_URL}/reset", json={"task_id": task_id}, timeout=30)
-    resp.raise_for_status()
-    obs = resp.json()
-    cumulative = 0.0
-    for _ in range(max_steps):
-        action = call_llm(obs)
-        step_resp = requests.post(f"{ENV_API_URL}/step", json=action, timeout=30)
-        step_resp.raise_for_status()
-        result = step_resp.json()
-        reward = result.get("reward", {})
-        cumulative += reward.get("value", 0) if isinstance(reward, dict) else reward
-        if result.get("done", False):
-            break
-        obs = result.get("observation", obs)
-    return round(cumulative, 4)
+def run_episode(task_id, max_steps):
+    try:
+        resp = requests.post(f"{ENV_API_URL}/reset", json={"task_id": task_id}, timeout=30)
+        resp.raise_for_status()
+        obs = resp.json()
+        cumulative = 0.0
+        for _ in range(max_steps):
+            action = call_llm(obs)
+            step_resp = requests.post(f"{ENV_API_URL}/step", json=action, timeout=30)
+            step_resp.raise_for_status()
+            result = step_resp.json()
+            reward = result.get("reward", {})
+            
+            # Extract reward value robustly
+            if isinstance(reward, dict):
+                val = reward.get("value", 0)
+            else:
+                val = float(reward or 0)
+            
+            cumulative += val
+            
+            if result.get("done", False):
+                break
+            obs = result.get("observation", obs)
+        return round(cumulative, 4)
+    except Exception as e:
+        print(f"[Episode Error] task={task_id}: {e}", file=sys.stderr)
+        return 0.0
 
 
 def main():
