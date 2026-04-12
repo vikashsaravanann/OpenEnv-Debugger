@@ -6,12 +6,15 @@ from openai import OpenAI
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
-API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+if not HF_TOKEN:
+    raise ValueError("HF_TOKEN environment variable is required")
 
 ENV_API_URL = os.getenv("ENV_URL", "http://localhost:7860")
 EPISODES_PER_TASK = 3
 
-client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
 
 SYSTEM_PROMPT = """You are an expert customer support triage agent.
 Respond with ONLY valid JSON. Fields:
@@ -125,12 +128,12 @@ def run_episode(task_id, max_steps):
             
         success = final >= 0.5
         rewards_joined = ",".join(rewards)
-        print(f"[END] success={str(success).lower()} steps={len(rewards)} score={final:.2f} rewards={rewards_joined}", flush=True)
+        print(f"[END] success={str(success).lower()} steps={len(rewards)} rewards={rewards_joined}", flush=True)
         return round(final, 4)
     except Exception as e:
         error_msg = str(e).replace('\n', ' ')
         print(f"[STEP] step=1 action={{}} reward=0.00 done=true error={error_msg}", flush=True)
-        print(f"[END] success=false steps=1 score=0.01 rewards=0.00", flush=True)
+        print(f"[END] success=false steps=1 rewards=0.00", flush=True)
         return 0.01
 
 def main():
