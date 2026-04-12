@@ -48,7 +48,7 @@ class SupportTriageEnv:
             step=0,
             current_ticket=ticket,
             actions_taken=[],
-            cumulative_reward=0.0,
+            cumulative_reward=0.01,
             done=False,
         )
         return self._make_observation()

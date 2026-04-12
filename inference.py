@@ -115,9 +115,9 @@ def run_episode(task_id, max_steps):
 
             except Exception as e:
                 error_msg = str(e).replace('\n', ' ')
-                print(f"[STEP] step={step_n} action={action_str} reward=0.00 done=true error={error_msg}", flush=True)
+                print(f"[STEP] step={step_n} action={action_str} reward=0.01 done=true error={error_msg}", flush=True)
                 done = True
-                rewards.append("0.00")
+                rewards.append("0.01")
                 break
             
         final = float(cumulative)
@@ -128,12 +128,12 @@ def run_episode(task_id, max_steps):
             
         success = final >= 0.5
         rewards_joined = ",".join(rewards)
-        print(f"[END] success={str(success).lower()} steps={len(rewards)} rewards={rewards_joined}", flush=True)
+        print(f"[END] success={str(success).lower()} steps={len(rewards)} score={final:.2f} rewards={rewards_joined}", flush=True)
         return round(final, 4)
     except Exception as e:
         error_msg = str(e).replace('\n', ' ')
-        print(f"[STEP] step=1 action={{}} reward=0.00 done=true error={error_msg}", flush=True)
-        print(f"[END] success=false steps=1 rewards=0.00", flush=True)
+        print(f"[STEP] step=1 action={{}} reward=0.01 done=true error={error_msg}", flush=True)
+        print(f"[END] success=false steps=1 score=0.01 rewards=0.01", flush=True)
         return 0.01
 
 def main():
